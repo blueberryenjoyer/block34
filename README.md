@@ -8,6 +8,8 @@ In this assessment, you'll be provided this GitHub repo with details for a full 
 
 Begin this Career Simulation by cloning the GitHub repo, installing dependencies, providing environmental variables to connect your database, and running the server. From here, you'll encounter four problems that you'll need to solve. See problems below:
 
+note: what is this ---> ?? "providing environmental variables to connect your database" ??
+
 ### Problem 1: Repair Database Schema
 
 We'll need to seed our database with some data. The database schema is currently broken, so we'll need to fix it. Go to `db/index.js` and fix the `createUser()` function.

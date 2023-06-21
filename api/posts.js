@@ -3,7 +3,7 @@ const postsRouter = express.Router();
 
 const { requireUser } = require('./utils');
 
-const { 
+const {
   createPost,
   getAllPosts,
   updatePost,
@@ -19,16 +19,16 @@ postsRouter.get('/', async (req, res, next) => {
       if (post.active) {
         return true;
       }
-    
+
       // the post is not active, but it belogs to the current user
       if (req.user && post.author.id === req.user.id) {
         return true;
       }
-    
+
       // none of the above are true
       return false;
     });
-  
+
     res.send({
       posts
     });
@@ -98,7 +98,21 @@ postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
 });
 
 postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
-  res.send({ message: 'under construction' });
+  try {
+    const originalPost = await getPostById(postId);
+
+    if (originalPost.author.id === req.user.id) {
+      const deletedPost = await deletePost(postId);
+      res.send({ post: deletedPost })
+    } else {
+      next({
+        name: 'UnauthorizedUserError',
+        message: 'You cannot delete a post that is not yours'
+      })
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
 });
 
 module.exports = postsRouter;
