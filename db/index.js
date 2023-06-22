@@ -277,6 +277,42 @@ async function getPostsByTagName(tagName) {
   }
 }
 
+
+
+async function deletePostFromDB(postId) {
+  try {
+    const post = await getPostById(postId)
+    if (post) {
+      const deletedPost = await client.query(`
+      DELETE FROM posts
+      WHERE id =$1
+      RETURNING *;
+      `, [postId])
+
+      if (deletedPost.rows[0]) {
+        return deletedPost.rows[0]
+      }
+      else {
+        throw {
+          name: "PostNotFoundError",
+          message: "cant find that id"
+
+        }
+      }
+    } else {
+      throw {
+        name: "PostNotFoundError",
+        message: "cant find that id"
+      }
+    }
+  } catch (error) {
+    throw error;
+  }
+
+
+
+}
+
 /**
  * TAG Methods
  */

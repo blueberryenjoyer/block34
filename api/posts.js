@@ -38,7 +38,7 @@ postsRouter.get('/', async (req, res, next) => {
 });
 
 postsRouter.post('/', requireUser, async (req, res, next) => {
-  const { title, content = "" } = req.body;
+  const { title, content = "", tags = "" } = req.body;
 
   const postData = {};
 
@@ -65,6 +65,11 @@ postsRouter.post('/', requireUser, async (req, res, next) => {
 postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
   const { postId } = req.params;
   const { title, content, tags } = req.body;
+  const tagsArr = tags.trim().split(/\s+/);
+
+  // const postData = {
+  //   tags: tagsArr
+  // }
 
   const updateFields = {};
 
@@ -99,20 +104,32 @@ postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
 
 postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
   try {
-    const originalPost = await getPostById(postId);
+    const { postId } = req.params
 
-    if (originalPost.author.id === req.user.id) {
-      const deletedPost = await deletePost(postId);
-      res.send({ post: deletedPost })
+    if (!postId) {
+      res.send('breakbreakbkreabakrebarebkn')
     } else {
-      next({
-        name: 'UnauthorizedUserError',
-        message: 'You cannot delete a post that is not yours'
-      })
+
+      const deletedPost = await deletePostFromDB(postId)
+
+      if (deletedPost) {
+        res.send(deletedPost)
+      }
+      else {
+        next({
+          name: 'aaaaaaaerror',
+          message: 'you have an error lolol'
+        })
+      }
+
     }
-  } catch ({ name, message }) {
-    next({ name, message });
+
+  } catch (error) {
+    next({ name, message })
   }
+
+
+  res.send({ message: 'under construction' });
 });
 
 module.exports = postsRouter;

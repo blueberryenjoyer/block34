@@ -1,9 +1,9 @@
 function requireUser(req, res, next) {
-
-  if (user) {
-    res.send(req.user)
+  if (req.user) {
+    next();
   }
-  else { console.log('req user isnt working for some reason') }
+  else { }
+
 
 }
 
